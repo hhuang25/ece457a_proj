@@ -15,5 +15,5 @@ function [result] = CameraScore(M, x, y, theta)
         end    
     end
 
-    result = sum(sum(V));
+    result = V;
 end
