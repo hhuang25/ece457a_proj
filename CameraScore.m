@@ -6,7 +6,7 @@ function [result] = CameraScore(M, x, y, theta)
         for j = 1:ncols
             if (i~=x && j~=y)
                 element = M(i, j);
-                [distance_camera, angle_camera] = distanceAndAngle(x, y, j, i);
+                [distance_camera, angle_camera] = distanceAndAngle(x, y, (j+0.5), (i+0.5));
                 f_result = f(distance_camera);
                 phi = getPhi(theta, angle_camera);
                 g_result = g(phi);
