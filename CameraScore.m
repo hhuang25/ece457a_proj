@@ -1,10 +1,11 @@
 function [result] = CameraScore(M, x, y, theta)
     [nrows, ncols] = size(M);
     V = zeros(nrows, ncols);
-    
     for i = 1:nrows
         for j = 1:ncols
-            if (i~=x && j~=y)
+            if (i == x && j == y)
+                V(i, j) = 0.0;
+            else
                 element = M(i, j);
                 [distance_camera, angle_camera] = distanceAndAngle(x, y, (j+0.5), (i+0.5));
                 f_result = f(distance_camera);
@@ -14,6 +15,5 @@ function [result] = CameraScore(M, x, y, theta)
             end
         end    
     end
-
     result = V;
 end

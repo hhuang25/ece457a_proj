@@ -1,11 +1,11 @@
-function [result] = CameraScores(M)
-    [nrows, ncols] = size(M);
-    nCameras = (nrows+1)*(ncols+1);
+function [result] = CameraScoresWithCamList(M, CamList)
+    [nCameras,~,~] = size(CamList);
+    [nrows,ncols] = size(M);
     V = zeros(nrows, ncols);
     for i = 1:nCameras
-        x = randi(ncols+1);
-        y = randi(nrows+1);
-        theta = randi(360);
+        x = CamList(i,1);
+        y = CamList(i,2);
+        theta = CamList(i,3);
         V1 = CameraScore(M, x, y, theta);
         [nrows1, ncols1] = size(V1);
         for j = 1:nrows1
