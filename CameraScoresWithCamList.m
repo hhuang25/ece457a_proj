@@ -1,4 +1,4 @@
-function [result] = CameraScoresWithCamList(M, CamList)
+function [result, score] = CameraScoresWithCamList(M, CamList)
     [nCameras,~] = size(CamList);
     [nrows,ncols] = size(M);
     V = zeros(nrows, ncols);
@@ -17,4 +17,5 @@ function [result] = CameraScoresWithCamList(M, CamList)
         end
     end
     result = V;
+    score = sum(result(:));
 end
