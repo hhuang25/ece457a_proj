@@ -1,5 +1,5 @@
 function [result] = CameraScoresWithCamList(M, CamList)
-    [nCameras,~,~] = size(CamList);
+    [nCameras,~] = size(CamList);
     [nrows,ncols] = size(M);
     V = zeros(nrows, ncols);
     for i = 1:nCameras
