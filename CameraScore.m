@@ -1,6 +1,9 @@
 % for theta: 0 is right, 90 is down, 180 is left and 270 is up
 function [result] = CameraScore(M, row, col, theta)
     [nrows, ncols] = size(M);
+    if row < 1 || col < 1 || row > nrows || col > ncols
+        error('Invalid input: row %d, col %d for matrix with size %d by %d',row,col,size(M));
+    end
     V = zeros(nrows, ncols);
     walls = [];
     for ii = 1:nrows
