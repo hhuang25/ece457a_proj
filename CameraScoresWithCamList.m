@@ -2,16 +2,16 @@ function [result, score] = CameraScoresWithCamList(M, CamList)
     [nCameras,~] = size(CamList);
     [nrows,ncols] = size(M);
     V = zeros(nrows, ncols);
-    for i = 1:nCameras
-        x = CamList(i,1);
-        y = CamList(i,2);
-        theta = CamList(i,3);
+    for ii = 1:nCameras
+        x = CamList(ii,1);
+        y = CamList(ii,2);
+        theta = CamList(ii,3);
         V1 = CameraScore(M, x, y, theta);
         [nrows1, ncols1] = size(V1);
-        for j = 1:nrows1
+        for jj = 1:nrows1
             for k = 1:ncols1
-                if (V1(j, k) > V(j, k))
-                    V(j, k) = V1(j, k);
+                if (V1(jj, k) > V(jj, k))
+                    V(jj, k) = V1(jj, k);
                 end
             end    
         end
