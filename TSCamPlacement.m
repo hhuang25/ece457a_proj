@@ -1,10 +1,11 @@
-function [camList, result] = TSCamPlacement(M, camList, tabuLen, iters)
+function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
     [nRows, nCols] = size(M);
     [numOfCams, ~] = size(camList);
     [~, currentScore] = CameraScoresWithCamList(M, camList);
     tabuList = zeros(nRows, nCols);
     candidates = [];
-    bestSoFar = -1;
+    bestSoFar = currentScore;
+    tabuLen = int16(sqrt(nRows * nCols));
     offset = 4;
     
     % Generate candidate solutions based on neighborhood
@@ -72,9 +73,9 @@ function [camList, result] = TSCamPlacement(M, camList, tabuLen, iters)
                 if score > bestSoFar
                     tabuLen = 1;
                     bestSoFar = score;
-                elseif score < currentScore
+                elseif score < currentScore && tabuLen < maxTabuLen
                     tabuLen = tabuLen + 1;
-                elseif score > currentScore
+                elseif score > currentScore && tabuLen > 1
                     tabuLen = tabuLen - 1;
                 end
                  
