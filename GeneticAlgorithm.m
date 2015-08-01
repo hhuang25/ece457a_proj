@@ -1,16 +1,30 @@
-function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover, init_mutation )
+function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover, init_mutation, population_number, generations )
+    if nargin == 4
+        population_number = 40;
+        generations = 300;
+    elseif nargin == 2
+        init_crossover = 0.9;
+        init_mutation = 0.1;
+        population_number = 40;
+        generations = 300;
+    elseif nargin == 1
+        numCameras = 1;
+        init_crossover = 0.9;
+        init_mutation = 0.1;
+        population_number = 40;
+        generations = 300;
+    end
     [nrows, ncols] = size(M);
-    population_number = 80;
     p_crossover = init_crossover;
     p_mutate = init_mutation;
-    generations = 200;
-    multigen_parents = 4;
+    
+    multigen_parents = 2;
     %viable_parents = round(population_number / 3);
-    viable_parents = (population_number - multigen_parents);
+    viable_parents = int16((population_number - multigen_parents));
     if mod(viable_parents,2) ~= 0
-        viable_parents = viable_parents - 1;
+        viable_parents = int16(viable_parents - 1);
     end
-    population = zeros(population_number,numCameras,3);
+    population = zeros(population_number,numCameras,3,'int16');
     %generate random initial population
     for ii = 1 : population_number
         cameras = zeros(numCameras,3);
@@ -28,14 +42,14 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
     while generations > 0
         generations = generations - 1;
         %crossover on top viable parents
-        new_population = zeros(population_number,numCameras,3);
+        new_population = zeros(population_number,numCameras,3,'int16');
         for ii = 1:2:viable_parents
-            id_parent1 = scored_population(ii,1);
-            id_parent2 = scored_population(ii+1,1);
+            id_parent1 = int16(scored_population(ii,1));
+            id_parent2 = int16(scored_population(ii+1,1));
             parent1 = squeeze(population(id_parent1,:,:));
             parent2 = squeeze(population(id_parent2,:,:));
-            child1 = zeros(numCameras,3);
-            child2 = zeros(numCameras,3);
+            child1 = zeros(numCameras,3,'int16');
+            child2 = zeros(numCameras,3,'int16');
             for jj = 1 : numCameras
                 % crossover on cameras
                 if rand < p_crossover
@@ -56,8 +70,8 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
                     child2(jj,2) = randi(ncols);
                 end
                 if rand < p_mutate
-                    child1(jj,3) = randi(randi(72)*5-1);
-                    child2(jj,3) = randi(randi(72)*5-1);
+                    child1(jj,3) = randi(72)*5-1;
+                    child2(jj,3) = randi(72)*5-1;
                 end
             end
             %new_population((ii-1)*2+1,:,:) = parent1;
@@ -74,13 +88,14 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
         scored_population = sortPopulation(M,population);
         %adaptation of mutation and crossover probability
         if scored_population(1,2) > current_highest
-            p_crossover = 0.95;
-            p_mutate = 0.02;
+            current_highest = scored_population(1,2);
+            %p_crossover = 0.92;
+            p_mutate = 0.2;
         else
-            p_crossover = init_crossover;
+            %p_crossover = init_crossover;
             p_mutate = init_mutation;
         end
-        current_highest = scored_population(1,2);
+        
     end
     cameralist = squeeze(population(scored_population(1,1),:,:));
     [~,score] = CameraScoresWithCamList(M,cameralist);

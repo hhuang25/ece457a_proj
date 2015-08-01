@@ -30,13 +30,13 @@ function [result] = CameraScore(M, row, col, theta)
             else
                 element = M(ii, jj);
                 % offset of 0.5 is used to center the square
-                [distance_camera, angle_camera] = distanceAndAngle(row,col,(ii+0.5), (jj+0.5));
+                [distance_camera, angle_camera] = distanceAndAngle(row,col,double(ii+0.5), double(jj+0.5));
                 if isBlocked(distance_camera,angle_camera,wall_stats) == 1
                     V(ii, jj) = 0.0;
                 else
                     f_result = f(distance_camera);
                     phi = getPhi(theta, angle_camera);
-                    g_result = g(phi);
+                    g_result = g(double(phi));
                     V(ii, jj) = g_result * f_result * element;
                 end
                 
