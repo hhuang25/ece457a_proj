@@ -3,13 +3,14 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
     [numOfCams, ~] = size(camList);
     [~, currentScore] = CameraScoresWithCamList(M, camList);
     tabuList = containers.Map();
-    candidates = [];
     bestSoFar = currentScore;
     tabuLen = int16(sqrt(nRows * nCols));
     offset = 4;
     
     % Generate candidate solutions based on neighborhood
     for nItrs = 1:iters
+        candidates = [];
+        
         for camNum = 1:numOfCams
             rowPos = camList(camNum, 1);
             colPos = camList(camNum, 2);
@@ -95,7 +96,7 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
                 end
                  
                 % Update current solution and tabu list
-                currentScore = score;         
+                currentScore = score;
                 tabuList(key) = tabuLen;         
                 break;
             end
