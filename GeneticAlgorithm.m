@@ -18,11 +18,12 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
     p_crossover = init_crossover;
     p_mutate = init_mutation;
     
-    multigen_parents = 2;
-    %viable_parents = round(population_number / 3);
+    multigen_parents = 4;
+    %current_gen_weight = [1:population_number].^2;
     viable_parents = int16((population_number - multigen_parents));
     if mod(viable_parents,2) ~= 0
         viable_parents = int16(viable_parents - 1);
+        multigen_parents = multigen_parents + 1;
     end
     population = zeros(population_number,numCameras,3,'int16');
     %generate random initial population
@@ -40,6 +41,12 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
     %cameralist = scored_population(1:10,:);
 
     while generations > 0
+        if mod(generations,20) == 0
+            fprintf('%d\n', generations);
+        else
+            fprintf('%d ', generations);
+        end
+        
         generations = generations - 1;
         %crossover on top viable parents
         new_population = zeros(population_number,numCameras,3,'int16');
@@ -81,6 +88,8 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
         end
         for ii = 1 : multigen_parents
             new_population(viable_parents+ii,:,:) = squeeze(population(scored_population(ii,1),:,:));
+            %generated_number = ceil(sqrt(randi(current_gen_weight(1,population_number))));
+            %new_population(ii+viable_parents,:,:) = squeeze(population(generated_number,:,:));
         end
         %new_population(viable_parents*2+1:population_number,:,:) = ...
             %population(viable_parents+1:viable_parents+remaining_population,:,:);
@@ -90,7 +99,7 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
         if scored_population(1,2) > current_highest
             current_highest = scored_population(1,2);
             %p_crossover = 0.92;
-            p_mutate = 0.2;
+            p_mutate = 0.02;
         else
             %p_crossover = init_crossover;
             p_mutate = init_mutation;
