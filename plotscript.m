@@ -1,8 +1,8 @@
 %declare matrix M
-M = [1 1 1 1; 1 1 1 1; 1 1 2 3; 1 2 3 4];
+M = [5 1 1 1 0 0 0; 1 1 1 1 1 0 0; 1 1 1 1 1 1 0; 1 1 1 1 1 1 1; 2 1 1 1 1 1 1; 3 2 1 1 1 1 1; 4 3 2 1 1 1 1];
 [nrows ncols] = size(M);
 %number of times the 3 configurations are repeatedly ran
-test = 10;
+test = 1;
 %other parameters
 w1 = 0.792;
 c11 = 1;
@@ -16,7 +16,7 @@ w3 = 0.792;
 c13 = 2;
 c23 = 0.5;
 
-particles = 20;
+particles = 10;
 iteration = 100;
 
 error = 0.001;
@@ -51,18 +51,18 @@ d3 = scatter(fit3, it3, 'b');
 title('Graph of Iterations to Fitness value');
 xlabel('Fitness Value');
 ylabel('Iterations');
-legend([d1, d2, d3],'M, 20, 0.792, 1, 1, 100, 0.001', 'M, 20, 0.792, 0.5, 2, 100, 0.001', 'M, 20, 0.792, 2, 0.5, 100, 0.001','Location','northwest');
+legend([d1, d2, d3],'M, 10, 0.792, 1, 1, 100, 0.001', 'M, 10, 0.792, 0.5, 2, 100, 0.001', 'M, 10, 0.792, 2, 0.5, 100, 0.001','Location','northwest');
 
 figure
-l1 = scatter(cam1(:,1), nrows-cam1(:,2), 'g.');
+l1 = scatter(cam1(:,1), cam1(:,2), 'g+');
 hold on
-l2 = scatter(cam2(:,1), nrows-cam2(:,2), 'r.');
+l2 = scatter(cam2(:,1), cam2(:,2), 'ro');
 hold on
-l3 = scatter(cam3(:,1), nrows-cam3(:,2), 'b.');
+l3 = scatter(cam3(:,1), cam3(:,2), 'b.');
 title('Scatter Graph of Camera location');
 xlabel('x');
-ylabel('y (inverted to match matrix)');
-legend([l1, l2, l3],'M, 20, 0.792, 1, 1, 100, 0.001', 'M, 20, 0.792, 0.5, 2, 100, 0.001', 'M, 20, 0.792, 2, 0.5, 100, 0.001','Location','northwest');
+ylabel('y');
+legend([l1, l2, l3],'M, 10, 0.792, 1, 1, 100, 0.001', 'M, 20, 0.792, 0.5, 2, 100, 0.001', 'M, 10, 0.792, 2, 0.5, 100, 0.001','Location','northwest');
 cam1
 cam2
 cam3
