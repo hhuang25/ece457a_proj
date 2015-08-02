@@ -31,6 +31,7 @@ xlabel('Fitness Value');
 ylabel('Iterations');
 legend([d1, d2, d3],'M, 20, 0.792, 1, 1, 100, 0.001', 'M, 20, 0.792, 0.5, 2, 100, 0.001', 'M, 20, 0.792, 2, 0.5, 100, 0.001','Location','northwest');
 
+%Note that the "4" here is the row size of the matrix M, I arbitrarily assigned it so that the graph lines up with the Matrix representation to make it more intuitive to read
 figure
 l1 = scatter(cam1(:,1), 4-cam1(:,2), 'g.');
 hold on
