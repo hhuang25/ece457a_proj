@@ -2,14 +2,15 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
     [nRows, nCols] = size(M);
     [numOfCams, ~] = size(camList);
     [~, currentScore] = CameraScoresWithCamList(M, camList);
-    tabuList = zeros(nRows, nCols);
-    candidates = [];
+    tabuList = containers.Map();
     bestSoFar = currentScore;
     tabuLen = int16(sqrt(nRows * nCols));
     offset = 4;
     
     % Generate candidate solutions based on neighborhood
     for nItrs = 1:iters
+        candidates = [];
+        
         for camNum = 1:numOfCams
             rowPos = camList(camNum, 1);
             colPos = camList(camNum, 2);
@@ -27,8 +28,10 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
                 for n = -1:1
                     camList(camNum, 3) = computeAngle(angle, offset, n);
                     [~, score] = CameraScoresWithCamList(M, camList);
-                    candidates = [candidates; [score, camNum, camList(camNum, 1), ...
-                                  colPos, camList(camNum, 3)]];
+                    if not(camList(camNum, 1) == rowPos && camList(camNum, 3) == angle)
+                        candidates = [candidates; [score, camNum, camList(camNum, 1), ...
+                                      colPos, camList(camNum, 3)]];
+                    end
                 end
             end
             
@@ -41,8 +44,10 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
                 for n = -1:1
                     camList(camNum, 3) = computeAngle(angle, offset, n);
                     [~, score] = CameraScoresWithCamList(M, camList);
-                    candidates = [candidates; [score, camNum, rowPos, ...
-                                  camList(camNum, 2), camList(camNum, 3)]];
+                    if not(camList(camNum, 2) == colPos && camList(camNum, 3) == angle)
+                        candidates = [candidates; [score, camNum, rowPos, ...
+                                      camList(camNum, 2), camList(camNum, 3)]];
+                    end
                 end
             end
             
@@ -51,6 +56,7 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
             camList(camNum, 3) = angle;
         end
         
+        candidates = unique(candidates, 'rows');
         candidates = sortrows(candidates, -1);
         
         % Look at the best candidates first
@@ -60,14 +66,24 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
             rowPos = candidates(ii, 3);
             colPos = candidates(ii, 4);
             angle = candidates(ii, 5);
+            
+            key = strcat(int2str(rowPos),',',int2str(colPos), ...
+                         ',',int2str(angle));
                 
-            if score > currentScore || tabuList(rowPos, colPos) == 0
+            if score > currentScore || not(isKey(tabuList, key)) || tabuList(key) == 0
                 camList(camera, 1) = rowPos;
                 camList(camera, 2) = colPos;
                 camList(camera, 3) = angle;   
                 
                 % Decrement elements in tabu list
-                tabuList(tabuList > 0) = tabuList(tabuList > 0) - 1;
+                tabus = keys(tabuList);
+                for elem = 1:size(tabus, 2)
+                    elemKey = char(tabus(elem));
+                    value = tabuList(elemKey);
+                    if value > 0
+                        tabuList(elemKey) = value - 1;
+                    end
+                end
                 
                 % Adaptive tabu length
                 if score > bestSoFar
@@ -80,8 +96,8 @@ function [camList, result] = TSCamPlacement(M, camList, maxTabuLen, iters)
                 end
                  
                 % Update current solution and tabu list
-                currentScore = score;            
-                tabuList(rowPos, colPos) = tabuLen;         
+                currentScore = score;
+                tabuList(key) = tabuLen;         
                 break;
             end
         end
