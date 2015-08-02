@@ -1,4 +1,5 @@
 function [ cameralist, score ] = ArtificialBeeColony( M, numCameras, colony_size, abandon_limit, iterations )
+    % default values
     if nargin == 4
         abandon_limit = 5;
         iterations = 100;
@@ -19,16 +20,16 @@ function [ cameralist, score ] = ArtificialBeeColony( M, numCameras, colony_size
         cameras = zeros(numCameras,3);
         for jj = 1 : numCameras
             % random row, col, angle b/w 0 and 359 with increment of 5
-            camera_stat = [randi(nrows),randi(ncols),randi(72)*5-1];
+            camera_stat = [randi(nrows),randi(ncols),randi(72)*5-5];
             cameras(jj,:) = camera_stat;
         end
         colony(ii,:,:) = cameras;  
     end
     
     while iterations > 0
-        if mod(iterations,20) == 0
+        if mod(iterations,10) == 0
             fprintf('%d\n', iterations);
-        else
+        elseif iterations < 10
             fprintf('%d ', iterations);
         end
         
@@ -76,7 +77,7 @@ function [ cameralist, score ] = ArtificialBeeColony( M, numCameras, colony_size
                     %employee becomes scout for new food source
                     for jj = 1 : numCameras
                         % random row, col, angle b/w 0 and 359 with increment of 5
-                        camera_stat = [randi(nrows),randi(ncols),randi(72)*5-1];
+                        camera_stat = [randi(nrows),randi(ncols),randi(72)*5-5];
                         cameras(jj,:) = camera_stat;
                     end
                     colony(ii,:,:) = cameras;

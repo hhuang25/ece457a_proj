@@ -1,4 +1,5 @@
 function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover, init_mutation, population_number, generations )
+    % default values   
     if nargin == 4
         population_number = 40;
         generations = 300;
@@ -31,7 +32,7 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
         cameras = zeros(numCameras,3);
         for jj = 1 : numCameras
             % random row, col, angle b/w 0 and 359 with increment of 5
-            camera_stat = [randi(nrows),randi(ncols),randi(72)*5-1];
+            camera_stat = [randi(nrows),randi(ncols),randi(72)*5-5];
             cameras(jj,:) = camera_stat;
         end
         population(ii,:,:) = cameras;  
@@ -41,9 +42,9 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
     %cameralist = scored_population(1:10,:);
 
     while generations > 0
-        if mod(generations,20) == 0
+        if mod(generations,10) == 0
             fprintf('%d\n', generations);
-        else
+        elseif generations < 10
             fprintf('%d ', generations);
         end
         
@@ -77,19 +78,15 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
                     child2(jj,2) = randi(ncols);
                 end
                 if rand < p_mutate
-                    child1(jj,3) = randi(72)*5-1;
-                    child2(jj,3) = randi(72)*5-1;
+                    child1(jj,3) = randi(72)*5-5;
+                    child2(jj,3) = randi(72)*5-5;
                 end
             end
-            %new_population((ii-1)*2+1,:,:) = parent1;
-            %new_population((ii-1)*2+2,:,:) = parent2;
             new_population((ii-1)*1+1,:,:) = child1;
             new_population((ii-1)*1+2,:,:) = child2;
         end
         for ii = 1 : multigen_parents
             new_population(viable_parents+ii,:,:) = squeeze(population(scored_population(ii,1),:,:));
-            %generated_number = ceil(sqrt(randi(current_gen_weight(1,population_number))));
-            %new_population(ii+viable_parents,:,:) = squeeze(population(generated_number,:,:));
         end
         %new_population(viable_parents*2+1:population_number,:,:) = ...
             %population(viable_parents+1:viable_parents+remaining_population,:,:);
@@ -98,10 +95,8 @@ function [ cameralist, score ] = GeneticAlgorithm( M, numCameras, init_crossover
         %adaptation of mutation and crossover probability
         if scored_population(1,2) > current_highest
             current_highest = scored_population(1,2);
-            %p_crossover = 0.92;
             p_mutate = 0.02;
         else
-            %p_crossover = init_crossover;
             p_mutate = init_mutation;
         end
         
