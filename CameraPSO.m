@@ -39,9 +39,9 @@ function [CamResult, FitnessOutput, ActualIterations] = CameraPSO(M, n, w, c1, c
     rng shuffle;
     for ii = 1:n
         %x coordinate
-        CamList(ii, 1) = (ncols).*rand(1);
+        CamList(ii, 1) = (nrows).*rand(1);
         %y coordinate
-        CamList(ii, 2) = (nrows).*rand(1);
+        CamList(ii, 2) = (ncols).*rand(1);
         %theta
         CamList(ii, 3) = (360).*rand(1);
     end
@@ -82,11 +82,11 @@ function [CamResult, FitnessOutput, ActualIterations] = CameraPSO(M, n, w, c1, c
             CamList(iiii,:) = CamList(iiii,:) + v(iiii,:);
             %corrects positions if going out of bounds
             CamList = max(CamList, 0);
-            CamList(:,1) = min(CamList(:,1), ncols);
-            CamList(:,2) = min(CamList(:,2), nrows);
+            CamList(:,1) = min(CamList(:,1), nrows);
+            CamList(:,2) = min(CamList(:,2), ncols);
             CamList(:,3) = min(CamList(:,3), 360);
         end
         ActualIterations = ActualIterations+ 1;
-        CamResult = CamList;
     end
+    CamResult = CamList;
 end
