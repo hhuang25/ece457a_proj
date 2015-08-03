@@ -374,7 +374,7 @@ if listLen > 0
             iters = str2num(get(handles.tsIter, 'String'));
             
             if isempty(tabuLen) || isempty(iters)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score] = TSCamPlacement(data, camList, tabuLen, iters);
                 disp('Final Camera List');
@@ -387,7 +387,7 @@ if listLen > 0
             itersPerTemp = str2num(get(handles.saIterPerTemp, 'String'));
             
             if isempty(initTemp) || isempty(alpha) || isempty(finalTemp) || isempty(itersPerTemp)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [score, cams] = SA(initTemp, alpha, finalTemp, itersPerTemp, data, camList);
                 disp('Final Camera List');
@@ -429,7 +429,7 @@ if listLen > 0
             
             if isempty(inertWeight) || isempty(pWeight) || ...
                     isempty(bWeight) || isempty(iters) || isempty(error)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score, iters] = CameraPSO(data, listLen, inertWeight, pWeight, bWeight, iters, error);
                 disp('Final Camera List');
