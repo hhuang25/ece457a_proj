@@ -223,6 +223,8 @@ numOfColumns = str2num(get(handles.colsEdit, 'String'));
 
 if not(isempty(numOfRows)) && not(isempty(numOfColumns))
     setAirportDimensions(handles.airport, numOfRows, numOfColumns);
+    set(handles.camListBox, 'String', '');
+    set(handles.camListBox, 'Value', 1);
 end
 
 
@@ -374,9 +376,10 @@ if listLen > 0
             iters = str2num(get(handles.tsIter, 'String'));
             
             if isempty(tabuLen) || isempty(iters)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score] = TSCamPlacement(data, camList, tabuLen, iters);
+                disp('Final Camera List');
                 disp(cams);
             end
         case 'SA'
@@ -386,9 +389,10 @@ if listLen > 0
             itersPerTemp = str2num(get(handles.saIterPerTemp, 'String'));
             
             if isempty(initTemp) || isempty(alpha) || isempty(finalTemp) || isempty(itersPerTemp)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [score, cams] = SA(initTemp, alpha, finalTemp, itersPerTemp, data, camList);
+                disp('Final Camera List');
                 disp(cams);
             end
 
@@ -402,6 +406,7 @@ if listLen > 0
                 msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score] = GeneticAlgorithm(data, listLen, crossover, muts, pop, gens);
+                disp('Final Camera List');
                 disp(cams);
             end
             
@@ -413,6 +418,7 @@ if listLen > 0
                 msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score, ~] = AntColonyOptimization(data, ants, listLen, iters);
+                disp('Final Camera List');
                 disp(cams);
             end
             
@@ -425,10 +431,12 @@ if listLen > 0
             
             if isempty(inertWeight) || isempty(pWeight) || ...
                     isempty(bWeight) || isempty(iters) || isempty(error)
-                msgbox('One or more of the algorithm paramters are invalid.', 'Error', 'error');
+                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
             else
                 [cams, score, iters] = CameraPSO(data, listLen, inertWeight, pWeight, bWeight, iters, error);
+                disp('Final Camera List');
                 disp(cams);
+                disp('Actual Iterations');
                 disp(iters);
             end
     end
@@ -436,7 +444,7 @@ if listLen > 0
     e = cputime - t;
     if score ~= -1
         set(handles.scoreValText, 'String', num2str(score));
-        set(handles.cpuValText, 'String', strcat(num2str(e),' ms'));
+        set(handles.cpuValText, 'String', strcat(num2str(e),' s'));
     end
     
     set(handles.runButton, 'Enable', 'on');
@@ -467,6 +475,8 @@ if isempty(num) || (num ~= 0 && num ~= 1)
     set(handles.airport, 'Data', data);
 end
 
+set(handles.camListBox, 'String', '');
+set(handles.camListBox, 'Value', 1);
 
 
 function tsTabu_Callback(hObject, eventdata, handles)
@@ -521,7 +531,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function saInitTemp_Callback(hObject, eventdata, handles)
 % hObject    handle to saInitTemp (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -531,8 +540,9 @@ function saInitTemp_Callback(hObject, eventdata, handles)
 %        str2double(get(hObject,'String')) returns contents of saInitTemp as a double
 num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
-    set(hObject, 'String', 'Init Temp');
+    set(hObject, 'String', 'Initial Temp');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function saInitTemp_CreateFcn(hObject, eventdata, handles)
@@ -547,7 +557,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function saAlpha_Callback(hObject, eventdata, handles)
 % hObject    handle to saAlpha (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -559,6 +568,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
     set(hObject, 'String', 'Alpha');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function saAlpha_CreateFcn(hObject, eventdata, handles)
@@ -573,7 +583,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function saFinalTemp_Callback(hObject, eventdata, handles)
 % hObject    handle to saFinalTemp (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -585,6 +594,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
     set(hObject, 'String', 'Final Temp');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function saFinalTemp_CreateFcn(hObject, eventdata, handles)
@@ -599,7 +609,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function saIterPerTemp_Callback(hObject, eventdata, handles)
 % hObject    handle to saIterPerTemp (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -612,6 +621,7 @@ if isempty(num) || num < 1 || floor(num) ~= num
     set(hObject, 'String', 'Iters / Temp');
 end
 
+
 % --- Executes during object creation, after setting all properties.
 function saIterPerTemp_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to saIterPerTemp (see GCBO)
@@ -623,7 +633,6 @@ function saIterPerTemp_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
-
 
 
 function gaCrossOver_Callback(hObject, eventdata, handles)
@@ -652,7 +661,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function gaMutation_Callback(hObject, eventdata, handles)
 % hObject    handle to gaMutation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -664,6 +672,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
     set(hObject, 'String', 'Mutation');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function gaMutation_CreateFcn(hObject, eventdata, handles)
@@ -678,7 +687,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function gaPopulation_Callback(hObject, eventdata, handles)
 % hObject    handle to gaPopulation (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -690,6 +698,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 1 || floor(num) ~= num
     set(hObject, 'String', 'Population');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function gaPopulation_CreateFcn(hObject, eventdata, handles)
@@ -704,7 +713,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function gaGenerations_Callback(hObject, eventdata, handles)
 % hObject    handle to gaGenerations (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -716,6 +724,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 1 || floor(num) ~= num
     set(hObject, 'String', 'Generations');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function gaGenerations_CreateFcn(hObject, eventdata, handles)
@@ -742,6 +751,7 @@ if isempty(num) || num < 0
     set(hObject, 'String', 'Inertial Weight');
 end
 
+
 % --- Executes during object creation, after setting all properties.
 function psoInertialWeight_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to psoInertialWeight (see GCBO)
@@ -755,7 +765,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function psoPersonalWeight_Callback(hObject, eventdata, handles)
 % hObject    handle to psoPersonalWeight (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -767,6 +776,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
     set(hObject, 'String', 'Weight (P)');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function psoPersonalWeight_CreateFcn(hObject, eventdata, handles)
@@ -807,7 +817,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function psoIterations_Callback(hObject, eventdata, handles)
 % hObject    handle to psoIterations (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -834,7 +843,6 @@ if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgr
 end
 
 
-
 function psoError_Callback(hObject, eventdata, handles)
 % hObject    handle to psoError (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -846,6 +854,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 0
     set(hObject, 'String', 'Error');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function psoError_CreateFcn(hObject, eventdata, handles)
@@ -919,8 +928,6 @@ function disableAllParams(handles)
     set(handles.psoError, 'Enable', 'off');
     
 
-
-
 function acoNumOfAnts_Callback(hObject, eventdata, handles)
 % hObject    handle to acoNumOfAnts (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
@@ -932,6 +939,7 @@ num = str2num(get(hObject, 'String'));
 if isempty(num) || num < 1 || floor(num) ~= num
     set(hObject, 'String', '# of Ants');
 end
+
 
 % --- Executes during object creation, after setting all properties.
 function acoNumOfAnts_CreateFcn(hObject, eventdata, handles)
