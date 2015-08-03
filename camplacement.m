@@ -22,7 +22,7 @@ function varargout = camplacement(varargin)
 
 % Edit the above text to modify the response to help camplacement
 
-% Last Modified by GUIDE v2.5 02-Aug-2015 21:59:14
+% Last Modified by GUIDE v2.5 03-Aug-2015 02:49:35
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -96,17 +96,15 @@ if numOfRows < 4
     numOfCols = numOfRows;
 end
 
-set(airport, 'ColumnWidth', {(position(3) * 2.499) / (numOfCols / 2)});
-if numOfRows < 8
-    const = 1.9;
-elseif numOfRows >= 11
-    const = 1.745;
-else
+set(airport, 'ColumnWidth', {(position(3) * 2.48) / (numOfCols / 2)});
+if numOfRows >= 9
     const = 1.8;
+else
+    const = 1.9;
 end
 
 if numOfRows == 2
-    set(airport, 'FontSize', 79);
+    set(airport, 'FontSize', 82);
 else
     set(airport, 'FontSize', 79 / (numOfRows  / const));
 end
@@ -351,8 +349,8 @@ function runButton_Callback(hObject, eventdata, handles)
 items = get(handles.camListBox, 'String');
 listLen = length(items);
 if listLen > 0
-    set(handles.scoreValText, 'String', '');
-    set(handles.cpuValText, 'String', '');
+    set(handles.scoreValText, 'String', 'Computing...');
+    set(handles.cpuValText, 'String', 'Computing...');
     set(handles.runButton, 'Enable', 'off');
     set(handles.addCamButton, 'Enable', 'off');
     set(handles.setDimButton, 'Enable', 'off');
@@ -369,8 +367,6 @@ if listLen > 0
     
     data = get(handles.airport', 'Data');
     score = -1;
-    
-    set(handles.runText, 'String', 'Running Algorithm...');
     drawnow;
     
     t = cputime;
@@ -466,6 +462,9 @@ if listLen > 0
         disp(exp);
     end
     
+	set(handles.scoreValText, 'String', '');
+    set(handles.cpuValText, 'String', '');
+    
     if hasError == 0
         e = cputime - t;
         if score ~= -1
@@ -477,7 +476,6 @@ if listLen > 0
     set(handles.runButton, 'Enable', 'on');
     set(handles.addCamButton, 'Enable', 'on');
     set(handles.setDimButton, 'Enable', 'on');
-    set(handles.runText, 'String', '');
 else
     msgbox('Please add one or more cameras.', 'Error', 'error');
 end
@@ -1091,3 +1089,13 @@ function abcIters_CreateFcn(hObject, eventdata, handles)
 if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
     set(hObject,'BackgroundColor','white');
 end
+
+
+% --- Executes on key press with focus on setDimButton and none of its controls.
+function setDimButton_KeyPressFcn(hObject, eventdata, handles)
+% hObject    handle to setDimButton (see GCBO)
+% eventdata  structure with the following fields (see UICONTROL)
+%	Key: name of the key that was pressed, in lower case
+%	Character: character interpretation of the key(s) that was pressed
+%	Modifier: name(s) of the modifier key(s) (i.e., control, shift) pressed
+% handles    structure with handles and user data (see GUIDATA)
