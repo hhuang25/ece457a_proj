@@ -370,7 +370,9 @@ if listLen > 0
     data = get(handles.airport', 'Data');
     score = -1;
     
-    set(handles.runText, 'String', 'Running Algorithm ...');
+    set(handles.runText, 'String', 'Running Algorithm...');
+    drawnow;
+    
     t = cputime;
     hasError = 0;
     try
