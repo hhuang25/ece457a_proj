@@ -22,7 +22,7 @@ function varargout = camplacement(varargin)
 
 % Edit the above text to modify the response to help camplacement
 
-% Last Modified by GUIDE v2.5 02-Aug-2015 19:46:14
+% Last Modified by GUIDE v2.5 02-Aug-2015 21:59:14
 
 % Begin initialization code - DO NOT EDIT
 gui_Singleton = 1;
@@ -369,87 +369,113 @@ if listLen > 0
     
     data = get(handles.airport', 'Data');
     score = -1;
+    
+    set(handles.runText, 'String', 'Running Algorithm ...');
     t = cputime;
-    switch get(get(handles.algoPanel,'SelectedObject'), 'String')
-        case 'TS'
-            tabuLen = str2num(get(handles.tsTabu, 'String'));
-            iters = str2num(get(handles.tsIter, 'String'));
-            
-            if isempty(tabuLen) || isempty(iters)
-                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
-            else
-                [cams, score] = TSCamPlacement(data, camList, tabuLen, iters);
-                disp('Final Camera List');
-                disp(cams);
-            end
-        case 'SA'
-            initTemp = str2num(get(handles.saInitTemp, 'String'));
-            alpha = str2num(get(handles.saAlpha, 'String'));
-            finalTemp = str2num(get(handles.saFinalTemp, 'String'));
-            itersPerTemp = str2num(get(handles.saIterPerTemp, 'String'));
-            
-            if isempty(initTemp) || isempty(alpha) || isempty(finalTemp) || isempty(itersPerTemp)
-                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
-            else
-                [score, cams] = SA(initTemp, alpha, finalTemp, itersPerTemp, data, camList);
-                disp('Final Camera List');
-                disp(cams);
-            end
+    hasError = 0;
+    try
+        switch get(get(handles.algoPanel,'SelectedObject'), 'String')
+            case 'TS'
+                tabuLen = str2num(get(handles.tsTabu, 'String'));
+                iters = str2num(get(handles.tsIter, 'String'));
 
-        case 'GA'
-            pop = str2num(get(handles.gaPopulation, 'String'));
-            muts = str2num(get(handles.gaMutation, 'String'));
-            crossover = str2num(get(handles.gaCrossOver, 'String'));
-            gens = str2num(get(handles.gaGenerations, 'String'));
-            
-            if isempty(pop) || isempty(muts) || isempty(crossover) || isempty(gens)
-                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
-            else
-                [cams, score] = GeneticAlgorithm(data, listLen, crossover, muts, pop, gens);
-                disp('Final Camera List');
-                disp(cams);
-            end
-            
-        case 'ACO'
-            ants = str2num(get(handles.acoNumOfAnts, 'String'));
-            iters = str2num(get(handles.acoIters, 'String'));
-            
-            if isempty(ants) || isempty(iters)
-                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
-            else
-                [cams, score, ~] = AntColonyOptimization(data, ants, listLen, iters);
-                disp('Final Camera List');
-                disp(cams);
-            end
-            
-        case 'PSO'
-            inertWeight = str2num(get(handles.psoInertialWeight, 'String'));
-            pWeight = str2num(get(handles.psoPersonalWeight, 'String'));
-            bWeight = str2num(get(handles.psoBestWeight, 'String'));
-            iters = str2num(get(handles.psoIterations, 'String'));
-            error = str2num(get(handles.psoError, 'String'));
-            
-            if isempty(inertWeight) || isempty(pWeight) || ...
-                    isempty(bWeight) || isempty(iters) || isempty(error)
-                msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
-            else
-                [cams, score, iters] = CameraPSO(data, listLen, inertWeight, pWeight, bWeight, iters, error);
-                disp('Final Camera List');
-                disp(cams);
-                disp('Actual Iterations');
-                disp(iters);
-            end
+                if isempty(tabuLen) || isempty(iters)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [cams, score] = TSCamPlacement(data, camList, tabuLen, iters);
+                    disp('Final Camera List');
+                    disp(cams);
+                end
+            case 'SA'
+                initTemp = str2num(get(handles.saInitTemp, 'String'));
+                alpha = str2num(get(handles.saAlpha, 'String'));
+                finalTemp = str2num(get(handles.saFinalTemp, 'String'));
+                itersPerTemp = str2num(get(handles.saIterPerTemp, 'String'));
+
+                if isempty(initTemp) || isempty(alpha) || isempty(finalTemp) || isempty(itersPerTemp)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [score, cams] = SA(initTemp, alpha, finalTemp, itersPerTemp, data, camList);
+                    disp('Final Camera List');
+                    disp(cams);
+                end
+
+            case 'GA'
+                pop = str2num(get(handles.gaPopulation, 'String'));
+                muts = str2num(get(handles.gaMutation, 'String'));
+                crossover = str2num(get(handles.gaCrossOver, 'String'));
+                gens = str2num(get(handles.gaGenerations, 'String'));
+
+                if isempty(pop) || isempty(muts) || isempty(crossover) || isempty(gens)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [cams, score] = GeneticAlgorithm(data, listLen, crossover, muts, pop, gens);
+                    disp('Final Camera List');
+                    disp(cams);
+                end
+
+            case 'ACO'
+                ants = str2num(get(handles.acoNumOfAnts, 'String'));
+                iters = str2num(get(handles.acoIters, 'String'));
+
+                if isempty(ants) || isempty(iters)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [cams, score, ~] = AntColonyOptimization(data, ants, listLen, iters);
+                    disp('Final Camera List');
+                    disp(cams);
+                end
+
+            case 'PSO'
+                inertWeight = str2num(get(handles.psoInertialWeight, 'String'));
+                pWeight = str2num(get(handles.psoPersonalWeight, 'String'));
+                bWeight = str2num(get(handles.psoBestWeight, 'String'));
+                iters = str2num(get(handles.psoIterations, 'String'));
+                error = str2num(get(handles.psoError, 'String'));
+
+                if isempty(inertWeight) || isempty(pWeight) || ...
+                        isempty(bWeight) || isempty(iters) || isempty(error)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [cams, score, iters] = CameraPSO(data, listLen, inertWeight, pWeight, bWeight, iters, error);
+                    disp('Final Camera List');
+                    disp(cams);
+                    disp('Actual Iterations');
+                    disp(iters);
+                end
+
+            case 'ABC'
+                colonySize = str2num(get(handles.abcColonySize, 'String'));
+                abandonLimit = str2num(get(handles.abcAbandonLimit, 'String'));
+                iters = str2num(get(handles.abcIters, 'String'));
+
+                if isempty(colonySize) || isempty(abandonLimit) || isempty(iters)
+                    msgbox('One or more of the algorithm parameters are invalid.', 'Error', 'error');
+                else
+                    [cams, score] = ArtificialBeeColony(data, listLen, colonySize, abandonLimit, iters);
+                    disp('Final Camera List');
+                    disp(cams);
+                end
+        end
+        
+    catch exp
+        msgbox('The algorithm encountered an error. Please check the console window for more details.', 'Error', 'error');
+        hasError = 1;
+        disp(exp);
     end
     
-    e = cputime - t;
-    if score ~= -1
-        set(handles.scoreValText, 'String', num2str(score));
-        set(handles.cpuValText, 'String', strcat(num2str(e),' s'));
+    if hasError == 0
+        e = cputime - t;
+        if score ~= -1
+            set(handles.scoreValText, 'String', num2str(score));
+            set(handles.cpuValText, 'String', strcat(num2str(e),' s'));
+        end
     end
     
     set(handles.runButton, 'Enable', 'on');
     set(handles.addCamButton, 'Enable', 'on');
     set(handles.setDimButton, 'Enable', 'on');
+    set(handles.runText, 'String', '');
 else
     msgbox('Please add one or more cameras.', 'Error', 'error');
 end
@@ -902,6 +928,10 @@ switch get(eventdata.NewValue, 'tag')
         set(handles.psoBestWeight, 'Enable', 'on');
         set(handles.psoIterations, 'Enable', 'on');
         set(handles.psoError, 'Enable', 'on');
+    case 'abcRadioButton'
+        set(handles.abcColonySize, 'Enable', 'on'); 
+        set(handles.abcAbandonLimit, 'Enable', 'on');
+        set(handles.abcIters, 'Enable', 'on');
 end
 
 function disableAllParams(handles)
@@ -926,6 +956,10 @@ function disableAllParams(handles)
     set(handles.psoBestWeight, 'Enable', 'off');
     set(handles.psoIterations, 'Enable', 'off');
     set(handles.psoError, 'Enable', 'off');
+    
+    set(handles.abcColonySize, 'Enable', 'off'); 
+    set(handles.abcAbandonLimit, 'Enable', 'off');
+    set(handles.abcIters, 'Enable', 'off');
     
 
 function acoNumOfAnts_Callback(hObject, eventdata, handles)
@@ -970,6 +1004,83 @@ end
 % --- Executes during object creation, after setting all properties.
 function acoIters_CreateFcn(hObject, eventdata, handles)
 % hObject    handle to acoIters (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function abcAbandonLimit_Callback(hObject, eventdata, handles)
+% hObject    handle to abcAbandonLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of abcAbandonLimit as text
+%        str2double(get(hObject,'String')) returns contents of abcAbandonLimit as a double
+num = str2num(get(hObject, 'String'));
+if isempty(num) || num < 0 || floor(num) ~= num
+    set(hObject, 'String', 'Abandon Limit');
+end
+
+% --- Executes during object creation, after setting all properties.
+function abcAbandonLimit_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to abcAbandonLimit (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+
+function abcColonySize_Callback(hObject, eventdata, handles)
+% hObject    handle to abcColonySize (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of abcColonySize as text
+%        str2double(get(hObject,'String')) returns contents of abcColonySize as a double
+num = str2num(get(hObject, 'String'));
+if isempty(num) || num < 1 || floor(num) ~= num
+    set(hObject, 'String', 'Colony Size');
+end
+
+% --- Executes during object creation, after setting all properties.
+function abcColonySize_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to abcColonySize (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    empty - handles not created until after all CreateFcns called
+
+% Hint: edit controls usually have a white background on Windows.
+%       See ISPC and COMPUTER.
+if ispc && isequal(get(hObject,'BackgroundColor'), get(0,'defaultUicontrolBackgroundColor'))
+    set(hObject,'BackgroundColor','white');
+end
+
+
+function abcIters_Callback(hObject, eventdata, handles)
+% hObject    handle to abcIters (see GCBO)
+% eventdata  reserved - to be defined in a future version of MATLAB
+% handles    structure with handles and user data (see GUIDATA)
+
+% Hints: get(hObject,'String') returns contents of abcIters as text
+%        str2double(get(hObject,'String')) returns contents of abcIters as a double
+num = str2num(get(hObject, 'String'));
+if isempty(num) || num < 1 || floor(num) ~= num
+    set(hObject, 'String', 'Iterations');
+end
+
+% --- Executes during object creation, after setting all properties.
+function abcIters_CreateFcn(hObject, eventdata, handles)
+% hObject    handle to abcIters (see GCBO)
 % eventdata  reserved - to be defined in a future version of MATLAB
 % handles    empty - handles not created until after all CreateFcns called
 
