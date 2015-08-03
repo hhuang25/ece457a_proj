@@ -223,6 +223,8 @@ numOfColumns = str2num(get(handles.colsEdit, 'String'));
 
 if not(isempty(numOfRows)) && not(isempty(numOfColumns))
     setAirportDimensions(handles.airport, numOfRows, numOfColumns);
+    set(handles.camListBox, 'String', '');
+    set(handles.camListBox, 'Value', 1);
 end
 
 
@@ -473,6 +475,8 @@ if isempty(num) || (num ~= 0 && num ~= 1)
     set(handles.airport, 'Data', data);
 end
 
+set(handles.camListBox, 'String', '');
+set(handles.camListBox, 'Value', 1);
 
 
 function tsTabu_Callback(hObject, eventdata, handles)
