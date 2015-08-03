@@ -436,7 +436,7 @@ if listLen > 0
     e = cputime - t;
     if score ~= -1
         set(handles.scoreValText, 'String', num2str(score));
-        set(handles.cpuValText, 'String', strcat(num2str(e),' ms'));
+        set(handles.cpuValText, 'String', strcat(num2str(e),' s'));
     end
     
     set(handles.runButton, 'Enable', 'on');
