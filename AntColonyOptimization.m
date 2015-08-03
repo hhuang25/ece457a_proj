@@ -18,7 +18,7 @@ function [ResultingCamList, ScoreOfResultCamList, PheromoneDepositMatrixr] = Ant
     for iteration=1:it
         %Construct Movement Record Matrix
         MovementRecordMatrix = zeros(nRow, nColumn, VaryingDegree);
-        DeltaCostMatrix = zeros(nRow, nColumn, VaryingDegree);
+        %DeltaCostMatrix = zeros(nRow, nColumn, VaryingDegree);
         fprintf('Iteration: %d\n', iteration);
         for ant=1:NumAnts
             CamList = zeros(NumCam, 3);
@@ -30,12 +30,13 @@ function [ResultingCamList, ScoreOfResultCamList, PheromoneDepositMatrixr] = Ant
             CamListEval = CamList;
             CamListEval(:,3) = CamListEval(:,3)*TotalDegree/VaryingDegree;
             [~, deltaCost] = CameraScoresWithCamList(M, CamListEval);
-            for camera=1:NumCam
-                DeltaCostMatrix(CamList(camera, 1), CamList(camera, 2), CamList(camera, 3)) = deltaCost;
-            end
+            deltaCost = deltaCost*10;
+            %for camera=1:NumCam
+                %DeltaCostMatrix(CamList(camera, 1), CamList(camera, 2), CamList(camera, 3)) = deltaCost;
+            %end
         end
-        CostMatrix = CostMatrix + DeltaCostMatrix*5;
-        PheromoneDepositMatrix = PheromoneDepositMatrix/5 + MovementRecordMatrix;
+        %CostMatrix = CostMatrix + DeltaCostMatrix*10;
+        PheromoneDepositMatrix = PheromoneDepositMatrix/5 + MovementRecordMatrix*deltaCost;
     end
     %Return Cam List
     ResultingCamList = zeros(NumCam, 3);
@@ -44,7 +45,7 @@ function [ResultingCamList, ScoreOfResultCamList, PheromoneDepositMatrixr] = Ant
         [~, loc] = max(PheromoneDepositMatrix(:));
         [R,C,T] = ind2sub([nRow,nColumn,VaryingDegree],loc);
         PheromoneDepositMatrix(R,C,T) = 0;
-        ResultingCamList(camera,:) = [R,C,T*TotalDegree/VaryingDegree];
+        ResultingCamList(camera,:) = [R,C,(T-1)*TotalDegree/VaryingDegree];
     end
     [~, ScoreOfResultCamList] = CameraScoresWithCamList(M, ResultingCamList);
 end
